@@ -1,0 +1,160 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:MainWindowVM ="clr-namespace:WPFDuplicateScaner.ViewModels"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" x:Class="WPFDuplicateScaner.MainWindow"
+        Title="DUPLICATE FILE SCANER" Height="400" Width="600">
+
+
+    <Window.Resources>
+        <MainWindowVM:MainWindowViewModel x:Key="MainWindowVM"/>
+
+        <Style x:Key="btnStyle" TargetType="{x:Type Button}">
+        	<Setter Property="Background" Value="#FF58C6D1"/>
+        	<Setter Property="Foreground" Value="White"/>
+        	<Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style x:Key="lblOptions" TargetType="{x:Type Label}">
+        	<Setter Property="Background" Value="#4CE0DCDC"/>
+        </Style>
+        <Style  TargetType="{x:Type ListBoxItem}">
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                    <Setter Property="Background" Value="#7F1DC0F0"/>
+                </Trigger>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#19000000"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Storyboard x:Key="StoryboardStartButton" AutoReverse="{Binding AutoReset, Mode=OneTime, Source={StaticResource MainWindowVM}}">
+    		<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="button">
+    			<EasingDoubleKeyFrame KeyTime="0" Value="-400"/>
+    			<EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="0"/>
+    			<EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+    		</DoubleAnimationUsingKeyFrames>
+    		<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="button">
+    			<EasingColorKeyFrame KeyTime="0" Value="#0058C6D1"/>
+    			<EasingColorKeyFrame KeyTime="0:0:0.7" Value="#FF58C6D1"/>
+    			<EasingColorKeyFrame KeyTime="0:0:1" Value="#FF3689EC"/>
+    		</ColorAnimationUsingKeyFrames>
+    		<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="button">
+    			<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+    			<EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="1"/>
+    			<EasingDoubleKeyFrame KeyTime="0:0:1" Value="1"/>
+    		</DoubleAnimationUsingKeyFrames>
+    		<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="button">
+    			<EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="100"/>
+    			<EasingDoubleKeyFrame KeyTime="0:0:1" Value="20"/>
+    			<EasingDoubleKeyFrame KeyTime="0:0:1.3" Value="100"/>
+    			<EasingDoubleKeyFrame KeyTime="0:0:1.6" Value="100"/>
+    		</DoubleAnimationUsingKeyFrames>
+    	</Storyboard>
+    </Window.Resources>
+
+	
+
+	<i:Interaction.Triggers>
+		<ei:DataTrigger Binding="{Binding EnableStart, Source={StaticResource MainWindowVM}}" Value="ShowStart">
+			<ei:ControlStoryboardAction Storyboard="{StaticResource StoryboardStartButton}" ControlStoryboardOption="Play"/>
+		</ei:DataTrigger>
+        
+        <ei:StoryboardCompletedTrigger Storyboard="{StaticResource StoryboardStartButton}">
+            <ei:CallMethodAction MethodName="DismissMessage" TargetObject="{Binding Mode=OneWay, Source={StaticResource MainWindowVM}}"/>
+        </ei:StoryboardCompletedTrigger>
+    </i:Interaction.Triggers>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="575*"/>
+			<ColumnDefinition Width="17*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.Background>
+			<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+				<GradientStop Color="#FF85CFC8" Offset="0"/>
+				<GradientStop Color="#FF94CBEA" Offset="1"/>
+			</LinearGradientBrush>
+		</Grid.Background>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="180"/>
+			<RowDefinition Height="320*"/>
+			<RowDefinition Height="40"/>
+		</Grid.RowDefinitions>
+		<GroupBox Header="   Search Options   " VerticalAlignment="Top" Height="160" Margin="8,8,8,0" BorderThickness="1" FontSize="14" Background="#FF91BEDC" Grid.ColumnSpan="2">
+			<Grid VerticalAlignment="Top" Margin="4" >
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="17"/>
+					<ColumnDefinition Width="32"/>
+					<ColumnDefinition Width="111"/>
+					<ColumnDefinition Width="320*"/>
+					<ColumnDefinition Width="120"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="40"/>
+					<RowDefinition Height="40"/>
+					<RowDefinition Height="40"/>
+
+				</Grid.RowDefinitions>
+				<Label Content="Select Scan Directory" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" FontSize="12" Grid.ColumnSpan="3" Margin="0,7"/>
+				<Label Content="Select Output file" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,6"/>
+				<Label Content="Scan Threads" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" FontSize="12" Grid.ColumnSpan="3" Margin="0,7"/>
+
+
+				<Label Content="{Binding SearchDirectory, Source={StaticResource MainWindowVM}}" VerticalAlignment="Center" Height="30" Grid.Column="3" Grid.Row="0" Style="{Binding Mode=OneWay, Source={StaticResource lblOptions}}" Margin="0,5"/>
+				<Label Content="{Binding OutputFile, Source={StaticResource MainWindowVM}}" VerticalAlignment="Center" Height="30" Grid.Column="3" Grid.Row="1" Style="{Binding Mode=OneWay, Source={StaticResource lblOptions}}" Margin="0,5"/>
+
+
+				<Button Content="Browse" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="4" Grid.Row="0" Height="30" Width="100"
+					Style="{Binding Mode=OneWay, Source={StaticResource btnStyle}}" 
+					Command="{Binding MainWindowCommand, Mode=OneWay, Source={StaticResource MainWindowVM}}"
+					CommandParameter ="SearchDirector" Margin="0,5" />
+
+				<Button Content="Browse" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="4" Grid.Row="1" Height="30" Width="100" 
+					Style="{Binding Mode=OneWay, Source={StaticResource btnStyle}}"
+					Command="{Binding MainWindowCommand, Mode=OneWay, Source={StaticResource MainWindowVM}}"
+					CommandParameter ="OutputFile" Margin="0,5"/>
+
+				<Button x:Name="button" Content="Start" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="4" Grid.Row="2" Height="30" Width="100" 
+					Style="{Binding Mode=OneWay, Source={StaticResource btnStyle}}" 
+					Command="{Binding MainWindowCommand, Mode=OneWay, Source={StaticResource MainWindowVM}}"
+					CommandParameter ="StartSearch" Visibility="{Binding IsVisiblilityForSearch, Mode=OneWay, Source={StaticResource MainWindowVM}}" Margin="0,5" RenderTransformOrigin="0.5,0.5">
+					<Button.RenderTransform>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</Button.RenderTransform>
+				</Button>
+
+				<Button Content="Cancel" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="4" Grid.Row="2" Height="30" Width="100" 
+					Style="{Binding Mode=OneWay, Source={StaticResource btnStyle}}" 
+					Command="{Binding MainWindowCommand, Mode=OneWay, Source={StaticResource MainWindowVM}}"
+					CommandParameter ="CancelSearch" Visibility="{Binding IsVisiblility, Mode=OneWay, Source={StaticResource MainWindowVM}}" Margin="0,5"/>
+
+
+				<Button Content="Pause" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="3" Grid.Row="2" Height="30" Width="100" 
+					Style="{Binding Mode=OneWay, Source={StaticResource btnStyle}}" 
+					Command="{Binding MainWindowCommand, Mode=OneWay, Source={StaticResource MainWindowVM}}"
+					CommandParameter ="PauseSearch" Visibility="{Binding IsVisiblility, Mode=OneWay, Source={StaticResource MainWindowVM}}" Margin="0,5" />
+
+				<ComboBox HorizontalAlignment="Left" VerticalAlignment="Center" Width="120" Height="30" Grid.Column="3" Grid.Row="2" 
+					ItemsSource="{Binding NumberOfThread, Source={StaticResource MainWindowVM}}" SelectedIndex="0" Margin="0,5" SelectedItem="{Binding NumThreads, Source={StaticResource MainWindowVM}}"/>
+			</Grid>
+		</GroupBox>
+		<ListBox VerticalAlignment="Top" Grid.Row="1" ItemsSource="{Binding DuplicateItemList, Source={StaticResource MainWindowVM}}" AlternationCount="2" Grid.ColumnSpan="2">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<DockPanel>
+						<Label VerticalAlignment="Center" Height="30" Content="{Binding DuplicateItem}" DockPanel.Dock="Top"/>
+					</DockPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<StatusBar  Grid.Row="2" Height="40" VerticalAlignment="Center" Grid.ColumnSpan="2" >
+			<Label VerticalAlignment="Center" Content="{Binding LblStatus, Source={StaticResource MainWindowVM}}"/>
+		</StatusBar>
+
+	</Grid>
+</Window>
